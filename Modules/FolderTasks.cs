@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FilenFolderManager.Models
+namespace FilenFolderManager.Modules
 {
     internal class FolderTasks
     {
