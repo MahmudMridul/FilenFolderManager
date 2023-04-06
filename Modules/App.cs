@@ -5,7 +5,7 @@ namespace FilenFolderManager.Modules
     {
         private string input = "";
         private string currentDirectory = "";
-        private bool doExit = false;
+        private bool exitRequest = false;
         private InputHandler inputHandler;
         private FolderTasks folderTasks;
 
@@ -17,13 +17,20 @@ namespace FilenFolderManager.Modules
             "q/Q | Exit"
         };
 
-        public App()
+        private Action[] actions;
+
+        internal App()
         {
             inputHandler = new InputHandler();
             folderTasks = new FolderTasks();
+            actions = new Action[] 
+            {
+                ChangeDrive,
+                GotoFolder
+            };
         }
 
-        public void Run()
+        internal void Run()
         {
             while(true)
             {
@@ -39,9 +46,40 @@ namespace FilenFolderManager.Modules
                 }
                 else
                 {
-                    Console.WriteLine("Do something else");
+                    ShowOptions();
+                    input = inputHandler.ReadInput(options.Length - 1);
+                    if (inputHandler.Exit(input)) break;
+                    actions[int.Parse(input) - 1]();
                 }
             }
+        }
+
+        internal void ShowOptions()
+        {
+            for(int i = 0; i < options.Length; i++)
+            {
+                Console.WriteLine(options[i]);
+            }
+        }
+
+        internal void ChangeDrive()
+        {
+            folderTasks.ShowDrives();
+            Console.WriteLine("Select a drive to continue...");
+            input = inputHandler.ReadInput(folderTasks.numberOfDrives);
+            if (!inputHandler.Exit(input))
+            {
+                currentDirectory = folderTasks.SelectDrive(input);
+            }
+            else
+            {
+                Console.WriteLine("You cannot choose exit from here.");
+            }
+        }
+
+        internal void GotoFolder()
+        {
+
         }
     }
 }

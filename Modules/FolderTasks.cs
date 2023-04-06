@@ -45,5 +45,10 @@ namespace FilenFolderManager.Modules
                 return "";
             }
         }
+
+        internal void ChangeDrive()
+        {
+
+        }
     }
 }
