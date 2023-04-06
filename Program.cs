@@ -6,8 +6,8 @@ namespace FilenFolderManager
     {
         public static void Main(string[] args)
         {
-            InputProcessor inP = new InputProcessor();
-            inP.Process();
+            App app = new App();
+            app.Run();
         }
     }
 }
