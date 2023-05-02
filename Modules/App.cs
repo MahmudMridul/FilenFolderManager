@@ -43,6 +43,7 @@ namespace FilenFolderManager.Modules
                     if (inputHandler.Exit(input)) break;
 
                     currentDirectory = folderTasks.SelectDrive(input);
+                    Console.Clear();
                 }
                 else
                 {
@@ -79,7 +80,7 @@ namespace FilenFolderManager.Modules
 
         internal void GotoFolder()
         {
-
+            
         }
     }
 }

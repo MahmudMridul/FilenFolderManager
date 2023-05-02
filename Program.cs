@@ -1,4 +1,5 @@
-﻿using FilenFolderManager.Modules;
+﻿using FilenFolderManager.LogUtils;
+using FilenFolderManager.Modules;
 
 namespace FilenFolderManager
 {
@@ -6,7 +7,9 @@ namespace FilenFolderManager
     {
         public static void Main(string[] args)
         {
+            Logger.Info("Instantiating app");
             App app = new App();
+            Logger.Info("Starting app");
             app.Run();
         }
     }

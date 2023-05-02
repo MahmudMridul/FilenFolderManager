@@ -46,7 +46,7 @@ namespace FilenFolderManager.Modules
             }
         }
 
-        internal void ChangeDrive()
+        internal void SearchFolder(string folderName)
         {
 
         }
