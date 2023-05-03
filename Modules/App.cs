@@ -1,19 +1,23 @@
 ﻿
+using FilenFolderManager.LogUtils;
+
 namespace FilenFolderManager.Modules
 {
     internal class App
     {
         private string input = "";
         private string currentDirectory = "";
-        private bool exitRequest = false;
+        private string info = "";
+        //private bool exitRequest = false;
         private InputHandler inputHandler;
         private FolderTasks folderTasks;
 
         private string[] options =
         {
-            "1 | Change drive",
-            "2 | Go to a folder",
-            "3 | See list of files and folder in current folder",
+            "1 | Clear console",
+            "2 | Change drive",
+            "3 | Go to a folder",
+            "4 | See list of files and folder in current folder",
             "q/Q | Exit"
         };
 
@@ -25,8 +29,10 @@ namespace FilenFolderManager.Modules
             folderTasks = new FolderTasks();
             actions = new Action[] 
             {
+                ClearConsole,
                 ChangeDrive,
-                GotoFolder
+                GotoFolder,
+                ListOfFilesAndFolder
             };
         }
 
@@ -34,6 +40,8 @@ namespace FilenFolderManager.Modules
         {
             while(true)
             {
+                UpdateInfo();
+                Console.WriteLine(info);
                 if(string.IsNullOrEmpty(currentDirectory))
                 {
                     folderTasks.ShowDrives();
@@ -43,7 +51,6 @@ namespace FilenFolderManager.Modules
                     if (inputHandler.Exit(input)) break;
 
                     currentDirectory = folderTasks.SelectDrive(input);
-                    Console.Clear();
                 }
                 else
                 {
@@ -55,12 +62,22 @@ namespace FilenFolderManager.Modules
             }
         }
 
+        private void UpdateInfo()
+        {
+            info = $"===== INFO =====\nCurrent Directory: {currentDirectory}\n================";
+        }
+
         internal void ShowOptions()
         {
             for(int i = 0; i < options.Length; i++)
             {
                 Console.WriteLine(options[i]);
             }
+        }
+
+        internal void ClearConsole()
+        {
+            Console.Clear();
         }
 
         internal void ChangeDrive()
@@ -78,8 +95,30 @@ namespace FilenFolderManager.Modules
             }
         }
 
+        internal void ListOfFilesAndFolder()
+        {
+            folderTasks.ShowFilesAndFolder(currentDirectory);
+        }
+
         internal void GotoFolder()
         {
+            string[] folders = folderTasks.GetListOfFolders(currentDirectory);
+
+            if(folders != null && folders.Length > 0)
+            {
+                for(int i = 0; i < folders.Length; ++i)
+                {
+                    Console.WriteLine($"{i + 1} | {folders[i]}");
+                }
+                Console.WriteLine("Select a folder from the list...");
+                string input = inputHandler.ReadInput(folders.Length);
+                currentDirectory = folderTasks.ChangeDirectory(folders[int.Parse(input) - 1]);
+            }
+            else
+            {
+                Logger.Info("Current directory doesn't have any folder");
+                Console.WriteLine($"Current directory doesn't have any folder.\nCurrent directory is {currentDirectory}");
+            }
             
         }
     }

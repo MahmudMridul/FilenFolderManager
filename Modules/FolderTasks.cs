@@ -1,4 +1,6 @@
 ﻿
+using FilenFolderManager.LogUtils;
+
 namespace FilenFolderManager.Modules
 {
     internal class FolderTasks
@@ -31,7 +33,7 @@ namespace FilenFolderManager.Modules
             return ChangeDirectory(drives[int.Parse(input) - 1].Name);
         }
 
-        private string ChangeDirectory(string directory)
+        internal string ChangeDirectory(string directory)
         {
             if (Directory.Exists(directory))
             {
@@ -44,6 +46,56 @@ namespace FilenFolderManager.Modules
                 Console.WriteLine("Invalid path");
                 return "";
             }
+        }
+
+        internal void ShowFilesAndFolder(string directory)
+        {
+            if(Directory.Exists(directory))
+            {
+                string[] files = Directory.GetFiles(directory);
+                string[] folders = Directory.GetDirectories(directory);
+
+                if (files.Length > 0)
+                {
+                    Console.WriteLine("Files: ");
+                    for (int i = 0; i < files.Length; ++i)
+                    {
+                        Console.WriteLine(files[i]);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"No files in {directory}");
+                }
+
+                if (folders.Length > 0)
+                {
+                    Console.WriteLine("Folders: ");
+                    for (int i = 0; i < folders.Length; ++i)
+                    {
+                        Console.WriteLine(folders[i]);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"No folders in {directory}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid directory!");
+                Logger.Info("Invalid directory found while showing list of files and folder");
+            }
+        }
+
+        internal string[] GetListOfFolders(string directory)
+        {
+            if(Directory.Exists(directory))
+            {
+                string[] folders = Directory.GetDirectories(directory);
+                return folders;
+            }
+            return null;
         }
 
         internal void SearchFolder(string folderName)
