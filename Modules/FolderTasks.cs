@@ -43,6 +43,7 @@ namespace FilenFolderManager.Modules
             }
             else
             {
+                Logger.Info("Invalid path");
                 Console.WriteLine("Invalid path");
                 return "";
             }
@@ -98,9 +99,14 @@ namespace FilenFolderManager.Modules
             return null;
         }
 
-        internal void SearchFolder(string folderName)
+        internal string[] GetListOfFiles(string directory)
         {
-
+            if (Directory.Exists(directory))
+            {
+                string[] files = Directory.GetFiles(directory);
+                return files;
+            }
+            return null;
         }
     }
 }

@@ -11,6 +11,7 @@ namespace FilenFolderManager.Modules
         //private bool exitRequest = false;
         private InputHandler inputHandler;
         private FolderTasks folderTasks;
+        private FileTasks fileTasks;
 
         private string[] options =
         {
@@ -18,6 +19,7 @@ namespace FilenFolderManager.Modules
             "2 | Change drive",
             "3 | Go to a folder",
             "4 | See list of files and folder in current folder",
+            "5 | Open a file",
             "q/Q | Exit"
         };
 
@@ -27,12 +29,14 @@ namespace FilenFolderManager.Modules
         {
             inputHandler = new InputHandler();
             folderTasks = new FolderTasks();
+            fileTasks = new FileTasks();
             actions = new Action[] 
             {
                 ClearConsole,
                 ChangeDrive,
                 GotoFolder,
-                ListOfFilesAndFolder
+                ListOfFilesAndFolder,
+                OpenFile
             };
         }
 
@@ -120,6 +124,26 @@ namespace FilenFolderManager.Modules
                 Console.WriteLine($"Current directory doesn't have any folder.\nCurrent directory is {currentDirectory}");
             }
             
+        }
+
+        internal void OpenFile()
+        {
+            string[] files = folderTasks.GetListOfFiles(currentDirectory);
+            if (files != null && files.Length > 0)
+            {
+                for (int i = 0; i < files.Length; ++i)
+                {
+                    Console.WriteLine($"{i + 1} | {files[i]}");
+                }
+                Console.WriteLine("Select a file from the list...");
+                string input = inputHandler.ReadInput(files.Length);
+                fileTasks.OpenFile(files[int.Parse(input) - 1]);
+            }
+            else
+            {
+                Logger.Info("Current directory doesn't have any files");
+                Console.WriteLine($"Current directory doesn't have any folder.\nCurrent directory is {currentDirectory}");
+            }
         }
     }
 }

@@ -1,12 +1,89 @@
-﻿using System;
+﻿using FilenFolderManager.LogUtils;
+using Microsoft.Win32;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace FilenFolderManager.Modules
 {
     internal class FileTasks
     {
+        internal void OpenFile(string filePath)
+        {
+            if(Path.IsPathRooted(filePath) && File.Exists(filePath))
+            {
+                try
+                {
+                    string extension = Path.GetExtension(filePath);
+
+                    if(filePath.Contains(" "))
+                    {
+                        Logger.Info("filePath contains space");
+                        filePath = "\"" + filePath + "\"";
+                        Logger.Info($"Modified filePath {filePath}");
+                    }
+                    RegistryKey key = Registry.ClassesRoot.OpenSubKey(extension);
+                    if (key != null)
+                    {
+                        object defaultValue = key.GetValue("");
+                        if (defaultValue != null)
+                        {
+                            RegistryKey appKey = Registry.ClassesRoot.OpenSubKey(defaultValue.ToString() + "\\shell\\open\\command");
+                            if (appKey != null)
+                            {
+                                object appValue = appKey.GetValue("");
+                                if (appValue != null)
+                                {
+                                    string applicationPath = appValue.ToString().ToLower();
+                                    string appPath = Regex.Replace(applicationPath, @"[^\u0000-\u007F]+", string.Empty);
+                                    appPath = appPath.Trim();
+                                    Logger.Info($"appPath: {appPath}");
+
+                                    int index = appPath.IndexOf(".exe");
+                                    if(index >= 0)
+                                    {
+                                        appPath = appPath.Substring(0, index + 4);
+                                        appPath = appPath.Replace("\"", "");
+                                    }
+                                    Logger.Info($"Modified appPath: {appPath}");
+
+                                    Process.Start(appPath, filePath);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Something went wrong");
+                                    Logger.Info("App value is null");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Something went wrong");
+                                Logger.Info("App Key is null");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Something went wrong");
+                            Logger.Info("Defualt value is null");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Something went wrong");
+                        Logger.Info("Registry Key is null");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Info("Exception occured. Message: " + ex.Message);
+                }
+            }
+            else
+            {
+                Logger.Info("File path or file doesn't exits");
+                Console.WriteLine("Something wrong with the file path/file name");
+            }
+        }
     }
 }

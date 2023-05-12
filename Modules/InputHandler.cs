@@ -18,9 +18,9 @@ namespace FilenFolderManager.Modules
         {
             string input = Console.ReadLine();
 
-            while(string.IsNullOrEmpty(input) && ValidInput(input, numOfOptions))
+            while(string.IsNullOrEmpty(input) || !ValidInput(input, numOfOptions))
             {
-                Console.WriteLine("Invalid input. Select an option from the list.");
+                Console.WriteLine("Invalid input. Input has to be non empty and between given options...");
                 input = Console.ReadLine();
             }
             return input;
