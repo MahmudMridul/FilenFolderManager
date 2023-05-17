@@ -18,8 +18,9 @@ namespace FilenFolderManager.Modules
             "1 | Clear console",
             "2 | Change drive",
             "3 | Go to a folder",
-            "4 | See list of files and folder in current folder",
+            "4 | See list",
             "5 | Open a file",
+            "6 | Go back",
             "q/Q | Exit"
         };
 
@@ -36,7 +37,8 @@ namespace FilenFolderManager.Modules
                 ChangeDrive,
                 GotoFolder,
                 ListOfFilesAndFolder,
-                OpenFile
+                OpenFile,
+                GoBack
             };
         }
 
@@ -144,6 +146,11 @@ namespace FilenFolderManager.Modules
                 Logger.Info("Current directory doesn't have any files");
                 Console.WriteLine($"Current directory doesn't have any folder.\nCurrent directory is {currentDirectory}");
             }
+        }
+
+        internal void GoBack()
+        {
+            currentDirectory = folderTasks.GoBackToPrevious(currentDirectory);
         }
     }
 }

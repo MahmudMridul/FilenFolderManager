@@ -38,7 +38,6 @@ namespace FilenFolderManager.Modules
             if (Directory.Exists(directory))
             {
                 Directory.SetCurrentDirectory(directory);
-                Console.WriteLine(Directory.GetCurrentDirectory());
                 return Directory.GetCurrentDirectory();
             }
             else
@@ -107,6 +106,28 @@ namespace FilenFolderManager.Modules
                 return files;
             }
             return null;
+        }
+
+        internal string GoBackToPrevious(string directory)
+        {
+            int index = directory.LastIndexOf("\\");
+            if (index == 2) //Handle root directory separately
+            {
+                directory = directory.Substring(0, index);
+                directory += "\\";
+                return ChangeDirectory(directory);
+            }
+            if (index >= 0)
+            {
+                directory = directory.Substring(0, index);
+                return ChangeDirectory(directory);
+            }
+            else
+            {
+                Console.WriteLine("Can't go back");
+                Logger.Info("Can't go back to previous. Base directory");
+                return directory;
+            }
         }
     }
 }
