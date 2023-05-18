@@ -9,6 +9,15 @@ namespace FilenFolderManager.Modules
 {
     internal class FileTasks
     {
+        private Dictionary<string, string> file_process;
+        private List<string> openedFiles;
+
+        public FileTasks()
+        {
+            file_process = new Dictionary<string, string>();
+            openedFiles = new List<string>();
+        }
+
         internal void OpenFile(string filePath)
         {
             if(Path.IsPathRooted(filePath) && File.Exists(filePath))
@@ -47,6 +56,8 @@ namespace FilenFolderManager.Modules
                                         appPath = appPath.Replace("\"", "");
                                     }
                                     Logger.Info($"Modified appPath: {appPath}");
+                                    file_process.Add(filePath, appPath);
+                                    openedFiles.Add(filePath);
 
                                     Process.Start(appPath, filePath);
                                 }
@@ -84,6 +95,43 @@ namespace FilenFolderManager.Modules
                 Logger.Info("File path or file doesn't exits");
                 Console.WriteLine("Something wrong with the file path/file name");
             }
+        }
+
+        internal void CloseFile(string filePath)
+        {
+            string processName = Path.GetFileNameWithoutExtension(file_process[filePath]);
+            Process[] processes = Process.GetProcessesByName(processName);
+            if (processes.Length == 0)
+            {
+                Console.WriteLine("No file found.");
+                Logger.Info($"There are no process named {file_process[filePath]}");
+                return;
+            }
+            foreach (Process process in processes)
+            {
+                try
+                {
+                    string processFileName = process.MainModule.FileName;
+                    if (processFileName.Equals(filePath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        process.Kill();
+                        Console.WriteLine($"{filePath} closed.");
+                        Logger.Info($"{filePath} closed.");
+                        file_process.Remove(filePath);
+                        openedFiles.Remove(filePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Could not close file: {filePath}");
+                    Logger.Info($"Error trying to close file- {filePath} : {ex.Message}");
+                }
+            }
+        }
+
+        internal string[] GetListOfOpenedFiles()
+        {
+            return openedFiles.ToArray();
         }
     }
 }

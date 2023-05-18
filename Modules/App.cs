@@ -8,7 +8,6 @@ namespace FilenFolderManager.Modules
         private string input = "";
         private string currentDirectory = "";
         private string info = "";
-        //private bool exitRequest = false;
         private InputHandler inputHandler;
         private FolderTasks folderTasks;
         private FileTasks fileTasks;
@@ -20,7 +19,8 @@ namespace FilenFolderManager.Modules
             "3 | Go to a folder",
             "4 | See list",
             "5 | Open a file",
-            "6 | Go back",
+            "6 | Close a file",
+            "7 | Go back",
             "q/Q | Exit"
         };
 
@@ -38,6 +38,7 @@ namespace FilenFolderManager.Modules
                 GotoFolder,
                 ListOfFilesAndFolder,
                 OpenFile,
+                CloseFile,
                 GoBack
             };
         }
@@ -145,6 +146,26 @@ namespace FilenFolderManager.Modules
             {
                 Logger.Info("Current directory doesn't have any files");
                 Console.WriteLine($"Current directory doesn't have any folder.\nCurrent directory is {currentDirectory}");
+            }
+        }
+
+        internal void CloseFile()
+        {
+            string[] openedFiles = fileTasks.GetListOfOpenedFiles();
+            if(openedFiles.Length > 0)
+            {
+                for(int i = 0; i < openedFiles.Length; ++i)
+                {
+                    Console.WriteLine($"{i + 1} | {openedFiles[i]}");
+                }
+                Console.WriteLine("Select a file from the list...");
+                string input = inputHandler.ReadInput(openedFiles.Length);
+                fileTasks.CloseFile(openedFiles[int.Parse(input) - 1]);
+            }
+            else
+            {
+                Console.WriteLine("No opened file.");
+                Logger.Info("User tried to close file. But no file is opened");
             }
         }
 
